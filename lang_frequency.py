@@ -1,6 +1,6 @@
 import os
-import string
 import sys
+import re
 
 
 def load_data(filepath):
@@ -12,35 +12,23 @@ def load_data(filepath):
 
 
 def get_most_frequent_words(text):
-    map_of_words = {}
-    map_most_frequent_words = {}
-
-    list_of_words = [word.strip(string.punctuation).lower() for word in text.split()]
-    list_of_words.sort()
-
+    wordcount = {}
+    text_without_punctuation = re.sub('[^\w]+', ' ', text.lower())
+    list_of_words = [word for word in text_without_punctuation.split()]
     for word in list_of_words:
-        if word and word not in map_of_words:
-            num_of_words = list_of_words.count(word)
-            map_of_words[word] = num_of_words
-            list_of_words.remove(word)
+        if word not in wordcount:
+            wordcount[word] = 1
         else:
-            list_of_words.remove(word)
-    if len(map_of_words) >= 10:
-        sorted_names = list(reversed(sorted(map_of_words, key=lambda x: map_of_words[x])))[:10]
-        for word in sorted_names:
-            map_most_frequent_words[word] = map_of_words[word]
-    else:
-        sorted_names = list(reversed(sorted(map_of_words, key=lambda x: map_of_words[x])))
-        for word in sorted_names:
-            map_most_frequent_words[word] = map_of_words[word]
-
-    return map_most_frequent_words
+            wordcount[word] += 1
+    return wordcount
 
 
 def print_most_frequent_words(map_of_words):
-    sorted_names = list(reversed(sorted(map_of_words, key=lambda x: map_of_words[x])))
+    number_of_words = 10
+    sorted_names = list(reversed(sorted(map_of_words, key=lambda x: map_of_words[x])))[:number_of_words]
+    print("\nThe most used words in the text are:\n")
     for name in sorted_names:
-        print("Word is: '{}', number of number of repetitions is: {}".format(name, map_of_words[name]))
+        print("'{}' - number of repetitions is: {}".format(name, map_of_words[name]))
 
 
 if __name__ == '__main__':
